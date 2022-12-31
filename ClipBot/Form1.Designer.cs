@@ -35,7 +35,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(246, 226);
+            this.button1.Location = new System.Drawing.Point(24, 153);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(252, 61);
             this.button1.TabIndex = 0;
@@ -45,32 +45,35 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(246, 106);
+            this.textBox1.Location = new System.Drawing.Point(75, 51);
             this.textBox1.Name = "textBox1";
+            this.textBox1.PlaceholderText = "Game Name";
             this.textBox1.Size = new System.Drawing.Size(150, 31);
             this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "game name";
+            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(570, 124);
+            this.textBox2.Location = new System.Drawing.Point(75, 98);
             this.textBox2.Name = "textBox2";
+            this.textBox2.PlaceholderText = "Amount of Clips";
             this.textBox2.Size = new System.Drawing.Size(150, 31);
             this.textBox2.TabIndex = 2;
-            this.textBox2.Text = "amount";
+            this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(300, 269);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "ClipBot";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

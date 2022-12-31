@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Functions.Program;
+using ClipBot;
 
 namespace ClipBot
 {
@@ -22,7 +23,9 @@ namespace ClipBot
         {
             string gameName = textBox1.Text;
             string amount = textBox2.Text;
-            GetClipLinks(gameName, amount);
+            Form f2 = new Form2(gameName, amount);
+            f2.Show();
+            
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -31,6 +34,11 @@ namespace ClipBot
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
         {
 
         }

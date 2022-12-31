@@ -39,7 +39,7 @@ namespace Functions
             
             string gameId = GetGameId(gameName);
             var first = amount;
-            MessageBox.Show($"GameID: {gameId}");
+            
 
             string url = $"https://api.twitch.tv/helix/clips?game_id={gameId}&first={first}";
             var request = WebRequest.Create(url);
@@ -59,7 +59,7 @@ namespace Functions
 
 
             int amountOfClips = responseData["data"].Count();
-            MessageBox.Show($"{amountOfClips} clips found.");
+            
             List<string> command = new List<string>();
 
             for (int i = 0; i<amountOfClips; i++)
@@ -67,7 +67,7 @@ namespace Functions
                 //Gets the clip urls
                 var rawClipId = responseData["data"][i]["id"];
                 string clipId = rawClipId.ToString();
-                MessageBox.Show($"ClipID: {clipId}");
+                
                 
 
                 
@@ -77,7 +77,7 @@ namespace Functions
                     command.Add($"TwitchDownloaderCLI.exe clipdownload -u {clipId} -o video{i}.mp4");
                     string combinedString = string.Join("", command);
                     ExecuteCommand(combinedString);
-                    MessageBox.Show(combinedString);
+                    
                     EditVideo(amountOfClips);
                 }
                 else
@@ -128,6 +128,7 @@ namespace Functions
                     string outputPath2 = @"C:\Users\Ethan\source\repos\ClipBot\ClipBot\bin\Debug\net6.0-windows\edited.mp4";
                     FFMpeg.Join(outputPath2, input);
                     Console.WriteLine("Compiled all clips as: edited.mp4");
+                    MessageBox.Show($"Compiled all {amountOfClips} clips.");
                 }
             
             }
@@ -142,7 +143,7 @@ namespace Functions
             Process process;
 
             processInfo = new ProcessStartInfo("cmd.exe", "/c " + command);
-            processInfo.CreateNoWindow = false;
+            processInfo.CreateNoWindow = true;
             processInfo.UseShellExecute = false;
             // *** Redirect the output ***
             processInfo.RedirectStandardError = true;
