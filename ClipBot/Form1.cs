@@ -77,5 +77,30 @@ namespace ClipBot
                 }
             }
         }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if(checkBox1.Checked)
+            {
+                dateTimePicker1.Visible = true;
+                dateTimePicker2.Visible = true;
+                button1.Location = new System.Drawing.Point(39, 129);
+                this.Size = new Size(342, 216);
+                label1.Visible = true;
+            }
+            else
+            {
+                dateTimePicker1.Visible = false;
+                dateTimePicker2.Visible = false;
+                button1.Location = new System.Drawing.Point(39, 91);
+                this.Size = new Size(342, 191);
+                label1.Visible = false;
+            }
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
