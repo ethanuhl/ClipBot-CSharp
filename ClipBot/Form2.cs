@@ -29,6 +29,7 @@ namespace ClipBot
         {
             void Form2_Shown(Object sender, EventArgs e)
             {
+                System.IO.Directory.CreateDirectory("Finished");
                 if (!string.IsNullOrEmpty(gameName) && !string.IsNullOrEmpty(streamerId))
                 {
                     parameters.Add("broadcaster_id", GetStreamerId(streamerId));

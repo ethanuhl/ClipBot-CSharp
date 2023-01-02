@@ -22,4 +22,10 @@
     <ProjectReference Include="References\FFMpeg CORE\FFMpegCore-master\FFMpegCore\FFMpegCore.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TwitchDownloaderCLI.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
