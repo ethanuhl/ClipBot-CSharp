@@ -24,6 +24,11 @@ namespace ClipBot
         public void button1_Click(object sender, EventArgs e)
         {
             DeleteVideoFiles();
+            string broadcaster_id = textBox3.Text;
+
+
+
+
             string startedAtDate = dateTimePicker1.Value.ToString("yyyy-MM-dd'T'00:00:00.000000Z", DateTimeFormatInfo.InvariantInfo);
             string endedAtDate = dateTimePicker2.Value.ToString("yyyy-MM-dd'T'00:00:00.000000Z", DateTimeFormatInfo.InvariantInfo);
 
@@ -31,11 +36,11 @@ namespace ClipBot
             {
                 string started_at = startedAtDate;
                 string ended_at = endedAtDate;
-                
+
 
                 string gameName = textBox1.Text;
                 string amount = numericUpDown1.Value.ToString();
-                Form f2 = new Form2(gameName, amount, started_at, ended_at);
+                Form f2 = new Form2(gameName, amount, started_at, ended_at, broadcaster_id);
                 f2.Show();
             }
             else
@@ -44,7 +49,7 @@ namespace ClipBot
                 string ended_at = null;
                 string gameName = textBox1.Text;
                 string amount = numericUpDown1.Value.ToString();
-                Form f2 = new Form2(gameName, amount, started_at, ended_at);
+                Form f2 = new Form2(gameName, amount, started_at, ended_at, broadcaster_id);
                 f2.Show();
             }
             

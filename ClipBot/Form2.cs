@@ -20,15 +20,41 @@ namespace ClipBot
 {
     public partial class Form2 : Form
     {
+        Dictionary<string, string> parameters = new Dictionary<string, string>(5);
+
+
         Stopwatch stopwatch = new Stopwatch();
         List<string> commandsForCropping = new List<string>();
         string sourceDir = Directory.GetCurrentDirectory();
-        public Form2(string gameName, string amount, string started_at, string ended_at)
+        public Form2(string gameName, string amount, string started_at, string ended_at, string streamerId)
         {
             void Form2_Shown(Object sender, EventArgs e)
             {
+                if(!string.IsNullOrEmpty(gameName) && !string.IsNullOrEmpty(streamerId))
+                {
+                    parameters.Add("broadcaster_id", GetStreamerId(streamerId));
+                }
+                
+
+                if (!string.IsNullOrEmpty(gameName) && string.IsNullOrEmpty(streamerId))
+                {
+                    parameters.Add("game_id", GetGameId(gameName));
+                }
+                else if (string.IsNullOrEmpty(gameName) && !string.IsNullOrEmpty(streamerId))
+                {
+                    parameters.Add("broadcaster_id", GetStreamerId(streamerId));
+                }
+
+
+                if (!string.IsNullOrEmpty(started_at))
+                {
+                    parameters.Add("started_at", started_at);
+                    parameters.Add("ended_at", ended_at);
+                }
+                parameters.Add("amount", amount);
+
                 stopwatch.Start();
-                GetClipLinks(gameName, amount, started_at, ended_at);
+                GetClipLinks(gameName, amount, streamerId);
 
 
                 this.Close();
@@ -54,7 +80,7 @@ namespace ClipBot
 
         }
 
-        public void GetClipLinks(string gameName, string amount, string started_at, string ended_at)
+        public void GetClipLinks(string gameName, string amount, string streamerName)
         {
             //Sets progress to 10
             AddToProgress(10);
@@ -63,32 +89,37 @@ namespace ClipBot
             //Need: (first) = amount of clips *max 100
 
             //Setting up parameters and headers for the HTTP request
+            //need either broadcaster_id or game_id
+            
 
-            string gameId = GetGameId(gameName);
+            //need this variable
             var first = amount;
 
-            string url;
-            
-            if (started_at != null)
+
+            //parameters = dictionary
+            List<string> compiledParameters = new List<string>();
+            string finishedParameters = null;
+            foreach (var param in parameters)
             {
-                url = $"https://api.twitch.tv/helix/clips?game_id={gameId}&started_at={started_at}&ended_at={ended_at}&first={first}";
-                var request = WebRequest.Create(url);
-                request.Headers.Add("Authorization", "Bearer w6e0u5v6iky3885udqof7uc0o7mp3n");
-                request.Headers.Add("Client-Id", "lw7irfw3qhufcx6mh7x599tsay8ux6");
-                ContinueUsingUrl(request, gameName);
+                compiledParameters.Add($"{param.Key}={param.Value}");
+                
+                finishedParameters = string.Join("&", compiledParameters);
+                
             }
-            else
-            {
-                url = $"https://api.twitch.tv/helix/clips?game_id={gameId}&first={first}";
-                var request = WebRequest.Create(url);
-                request.Headers.Add("Authorization", "Bearer w6e0u5v6iky3885udqof7uc0o7mp3n");
-                request.Headers.Add("Client-Id", "lw7irfw3qhufcx6mh7x599tsay8ux6");
-                ContinueUsingUrl(request, gameName);
-            }
-            
+            MessageBox.Show(finishedParameters);
+
+
+
+            string url = $"https://api.twitch.tv/helix/clips?{finishedParameters}";
+
+            var request = WebRequest.Create(url);
+            request.Headers.Add("Authorization", "Bearer w6e0u5v6iky3885udqof7uc0o7mp3n");
+            request.Headers.Add("Client-Id", "lw7irfw3qhufcx6mh7x599tsay8ux6");
+            ContinueUsingUrl(request, gameName, streamerName);
+
         }
 
-        private void ContinueUsingUrl(WebRequest request, string gameName)
+        private void ContinueUsingUrl(WebRequest request, string gameName, string streamerName)
         {
             request.Method = "GET";
 
@@ -104,6 +135,7 @@ namespace ClipBot
 
 
             int amountOfClips = responseData["data"].Count();
+            MessageBox.Show(amountOfClips.ToString());
 
             List<string> command = new List<string>();
 
@@ -120,7 +152,7 @@ namespace ClipBot
                 {
 
                     command.Add($"TwitchDownloaderCLI.exe clipdownload -u {clipId} -o video{i}.mp4 & exit");
-                    commandsForCropping.Add($"ffmpeg -ss 00:00:00 -y -i video{i}.mp4 -t 00:00:15 -c:v copy -c:a copy -avoid_negative_ts make_zero video{i} & exit");
+                    commandsForCropping.Add($"ffmpeg -ss 00:00:00 -y -i video{i}.mp4 -to 00:00:10 -c:v copy -c:a copy -avoid_negative_ts make_zero video{i} & exit");
                     string combinedString = string.Join("", command);
                     AddToProgress(30 * (1 / amountOfClips));
                     //Progress should be at 40
@@ -135,18 +167,18 @@ namespace ClipBot
                     AddToProgress(40);
                     //Progress should be at 80
 
-                    EditVideo(amountOfClips, gameName);
+                    EditVideo(amountOfClips, gameName, streamerName);
                 }
                 else
                 {
                     AddToProgress(30 / (amountOfClips - 1));
-                    commandsForCropping.Add($"ffmpeg -ss 00:00:00 -y -i video{i}.mp4 -t 00:00:15 -c:v copy -c:a copy -avoid_negative_ts make_zero video{i} & exit");
+                    commandsForCropping.Add($"ffmpeg -ss 00:00:00 -y -i video{i}.mp4 -to 00:00:10 -c:v copy -c:a copy -avoid_negative_ts make_zero video{i} & exit");
                     command.Add($"TwitchDownloaderCLI.exe clipdownload -u {clipId} -o video{i}.mp4 & ");
                 }
             }
         }
 
-        private void EditVideo(int amountOfClips, string gameName)
+        private void EditVideo(int amountOfClips, string gameName, string streamerName)
         {
             Console.WriteLine("Compiling Clips");
             List<string> list = new List<string>();
@@ -159,7 +191,7 @@ namespace ClipBot
                 {
                     DateTime now = DateTime.Now;
                     string formattedTime = now.ToString("MMddyy_Hmmss");
-                    string outputPath2 = @$"{sourceDir}\Finished\{gameName}{formattedTime}.mp4";
+                    string outputPath2 = @$"{sourceDir}\Finished\{streamerName}{gameName}{formattedTime}.mp4";
                     FFMpeg.Join(outputPath2, input);
                     stopwatch.Stop();
                     MessageBox.Show($@"Finished all {amountOfClips} clips in {stopwatch.ElapsedMilliseconds / 1000} seconds at {sourceDir}\Finished\{gameName}{formattedTime}");
@@ -218,11 +250,46 @@ namespace ClipBot
             var responseData3 = JObject.Parse(data3);
 
 
-            var rawGameId = responseData3["data"][0]["id"];
-            string gameId = rawGameId.ToString();
+            if(!string.IsNullOrEmpty(gameName))
+            {
+                var rawGameId = responseData3["data"][0]["id"];
+                string gameId = rawGameId.ToString();
 
 
-            return gameId;
+                return gameId;
+            }
+            else
+            {
+                string gameId = null;
+                return gameId;
+            }
+            
+        }
+        private static string GetStreamerId(string streamerName)
+        {
+            //uses: login: "pokimane"
+            //gets data[id]
+            string url = $"https://api.twitch.tv/helix/users?login={streamerName}";
+            var request4 = WebRequest.Create(url);
+            request4.Headers.Add("Authorization", "Bearer w6e0u5v6iky3885udqof7uc0o7mp3n");
+            request4.Headers.Add("Client-Id", "lw7irfw3qhufcx6mh7x599tsay8ux6");
+            request4.Method = "GET";
+
+            //Completing the http request
+            using var webResponse4 = request4.GetResponse();
+            using var webStream4 = webResponse4.GetResponseStream();
+
+            //Converts to a string and parses to find the url of each clip
+            using var reader4 = new StreamReader(webStream4);
+            var data4 = reader4.ReadToEnd();
+            var responseData4 = JObject.Parse(data4);
+
+
+            var rawStreamerId = responseData4["data"][0]["id"];
+            string streamerId = rawStreamerId.ToString();
+
+
+            return streamerId;
         }
     }
 }
