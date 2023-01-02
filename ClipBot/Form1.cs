@@ -19,8 +19,10 @@ namespace ClipBot
         public Form1()
         {
             InitializeComponent();
+            DeleteVideoFiles();
             dateTimePicker1.Value = DateTime.Now;
             dateTimePicker2.Value = DateTime.Now;
+            
         }
 
         public void button1_Click(object sender, EventArgs e)
@@ -56,7 +58,7 @@ namespace ClipBot
             }
             
         }
-
+        
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
@@ -71,7 +73,7 @@ namespace ClipBot
         {
 
         }
-        public void DeleteVideoFiles()
+        private void DeleteVideoFiles()
         {
             string sourceDir = Directory.GetCurrentDirectory();
             string[] mp4List = Directory.GetFiles(sourceDir, "*.mp4");

@@ -54,6 +54,7 @@ namespace ClipBot
                 stopwatch.Start();
                 GetClipLinks(gameName, amount, streamerId);
 
+                DeleteVideoFiles();
                 this.Close();
             }
             InitializeComponent();
@@ -265,5 +266,19 @@ namespace ClipBot
 
             return streamerId;
         }
+        private void DeleteVideoFiles()
+        {
+            string sourceDir = Directory.GetCurrentDirectory();
+            string[] mp4List = Directory.GetFiles(sourceDir, "*.mp4");
+
+            foreach (string f in mp4List)
+            {
+                if (!f.Equals("edited.mp4"))
+                {
+                    File.Delete(f);
+                }
+            }
+        }
     }
+    
 }
