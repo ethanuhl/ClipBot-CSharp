@@ -51,7 +51,7 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(56, 52);
+            this.textBox1.Location = new System.Drawing.Point(56, 63);
             this.textBox1.Name = "textBox1";
             this.textBox1.PlaceholderText = "Game Name";
             this.textBox1.Size = new System.Drawing.Size(150, 31);
@@ -61,7 +61,7 @@
             // 
             // numericUpDown1
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(260, 52);
+            this.numericUpDown1.Location = new System.Drawing.Point(260, 44);
             this.numericUpDown1.Minimum = new decimal(new int[] {
             1,
             0,
@@ -124,7 +124,7 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(56, 12);
+            this.textBox3.Location = new System.Drawing.Point(56, 23);
             this.textBox3.Name = "textBox3";
             this.textBox3.PlaceholderText = "Streamer Name";
             this.textBox3.Size = new System.Drawing.Size(150, 31);
@@ -145,6 +145,7 @@
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "Form1";
             this.Text = "ClipBot";
             this.Load += new System.EventHandler(this.Form1_Load);
