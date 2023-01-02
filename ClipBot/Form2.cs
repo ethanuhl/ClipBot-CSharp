@@ -9,19 +9,18 @@ using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 //using WMPLib;
 
-
 namespace ClipBot
 {
     public partial class Form2 : Form
     {
         Dictionary<string, string> parameters = new Dictionary<string, string>(5);
-
 
         Stopwatch stopwatch = new Stopwatch();
         List<string> commandsForCropping = new List<string>();
@@ -30,11 +29,10 @@ namespace ClipBot
         {
             void Form2_Shown(Object sender, EventArgs e)
             {
-                if(!string.IsNullOrEmpty(gameName) && !string.IsNullOrEmpty(streamerId))
+                if (!string.IsNullOrEmpty(gameName) && !string.IsNullOrEmpty(streamerId))
                 {
                     parameters.Add("broadcaster_id", GetStreamerId(streamerId));
                 }
-                
 
                 if (!string.IsNullOrEmpty(gameName) && string.IsNullOrEmpty(streamerId))
                 {
@@ -45,17 +43,15 @@ namespace ClipBot
                     parameters.Add("broadcaster_id", GetStreamerId(streamerId));
                 }
 
-
                 if (!string.IsNullOrEmpty(started_at))
                 {
                     parameters.Add("started_at", started_at);
                     parameters.Add("ended_at", ended_at);
                 }
-                parameters.Add("amount", amount);
+                parameters.Add("first", amount);
 
                 stopwatch.Start();
                 GetClipLinks(gameName, amount, streamerId);
-
 
                 this.Close();
             }
@@ -68,7 +64,6 @@ namespace ClipBot
         {
             progressBar1.Value += value;
         }
-
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
@@ -90,27 +85,19 @@ namespace ClipBot
 
             //Setting up parameters and headers for the HTTP request
             //need either broadcaster_id or game_id
-            
-
-            //need this variable
-            var first = amount;
-
 
             //parameters = dictionary
             List<string> compiledParameters = new List<string>();
             string finishedParameters = null;
             foreach (var param in parameters)
             {
-                compiledParameters.Add($"{param.Key}={param.Value}");
-                
+                compiledParameters.Add($@"{param.Key}={param.Value}");
+
                 finishedParameters = string.Join("&", compiledParameters);
-                
+
             }
-            MessageBox.Show(finishedParameters);
 
-
-
-            string url = $"https://api.twitch.tv/helix/clips?{finishedParameters}";
+            string url = $@"https://api.twitch.tv/helix/clips?{finishedParameters}";
 
             var request = WebRequest.Create(url);
             request.Headers.Add("Authorization", "Bearer w6e0u5v6iky3885udqof7uc0o7mp3n");
@@ -124,29 +111,27 @@ namespace ClipBot
             request.Method = "GET";
 
             //Completing the http request
-            using var webResponse = request.GetResponse();
-            using var webStream = webResponse.GetResponseStream();
+            using
+            var webResponse = request.GetResponse();
+            using
+            var webStream = webResponse.GetResponseStream();
 
             //Converts to a string and parses to find the url of each clip
-            using var reader = new StreamReader(webStream);
+            using
+            var reader = new StreamReader(webStream);
             var data = reader.ReadToEnd();
             var responseData = JObject.Parse(data);
 
-
-
             int amountOfClips = responseData["data"].Count();
-            MessageBox.Show(amountOfClips.ToString());
+            MessageBox.Show($"{amountOfClips.ToString()} clips found.");
 
             List<string> command = new List<string>();
-
 
             for (int i = 0; i < amountOfClips; i++)
             {
                 //Gets the clip urls
                 var rawClipId = responseData["data"][i]["id"];
                 string clipId = rawClipId.ToString();
-
-
 
                 if (i == amountOfClips - 1)
                 {
@@ -162,7 +147,6 @@ namespace ClipBot
                     {
                         ExecuteCommand(seperateCommand);
                     }
-
 
                     AddToProgress(40);
                     //Progress should be at 80
@@ -199,9 +183,6 @@ namespace ClipBot
 
             }
         }
-
-
-
 
         static void ExecuteCommand(string command)
         {
@@ -241,29 +222,20 @@ namespace ClipBot
             request3.Method = "GET";
 
             //Completing the http request
-            using var webResponse3 = request3.GetResponse();
-            using var webStream3 = webResponse3.GetResponseStream();
+            using
+            var webResponse3 = request3.GetResponse();
+            using
+            var webStream3 = webResponse3.GetResponseStream();
 
             //Converts to a string and parses to find the url of each clip
-            using var reader3 = new StreamReader(webStream3);
+            using
+            var reader3 = new StreamReader(webStream3);
             var data3 = reader3.ReadToEnd();
             var responseData3 = JObject.Parse(data3);
+            var rawGameId = responseData3["data"][0]["id"];
+            string gameId = rawGameId.ToString();
 
-
-            if(!string.IsNullOrEmpty(gameName))
-            {
-                var rawGameId = responseData3["data"][0]["id"];
-                string gameId = rawGameId.ToString();
-
-
-                return gameId;
-            }
-            else
-            {
-                string gameId = null;
-                return gameId;
-            }
-            
+            return gameId;
         }
         private static string GetStreamerId(string streamerName)
         {
@@ -276,18 +248,19 @@ namespace ClipBot
             request4.Method = "GET";
 
             //Completing the http request
-            using var webResponse4 = request4.GetResponse();
-            using var webStream4 = webResponse4.GetResponseStream();
+            using
+            var webResponse4 = request4.GetResponse();
+            using
+            var webStream4 = webResponse4.GetResponseStream();
 
             //Converts to a string and parses to find the url of each clip
-            using var reader4 = new StreamReader(webStream4);
+            using
+            var reader4 = new StreamReader(webStream4);
             var data4 = reader4.ReadToEnd();
             var responseData4 = JObject.Parse(data4);
 
-
             var rawStreamerId = responseData4["data"][0]["id"];
             string streamerId = rawStreamerId.ToString();
-
 
             return streamerId;
         }

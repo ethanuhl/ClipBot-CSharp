@@ -19,6 +19,8 @@ namespace ClipBot
         public Form1()
         {
             InitializeComponent();
+            dateTimePicker1.Value = DateTime.Now;
+            dateTimePicker2.Value = DateTime.Now;
         }
 
         public void button1_Click(object sender, EventArgs e)
@@ -32,7 +34,7 @@ namespace ClipBot
             string startedAtDate = dateTimePicker1.Value.ToString("yyyy-MM-dd'T'00:00:00.000000Z", DateTimeFormatInfo.InvariantInfo);
             string endedAtDate = dateTimePicker2.Value.ToString("yyyy-MM-dd'T'00:00:00.000000Z", DateTimeFormatInfo.InvariantInfo);
 
-            if (startedAtDate.Equals(DateTime.Now.ToString("yyyy-MM-dd'T'00:00:00.000000Z", DateTimeFormatInfo.InvariantInfo)) == false) 
+            if (startedAtDate.Equals(DateTime.Now.ToString("yyyy-MM-dd'T'00:00:00.000000Z", DateTimeFormatInfo.InvariantInfo)) == false && checkBox1.Checked == true) 
             {
                 string started_at = startedAtDate;
                 string ended_at = endedAtDate;
